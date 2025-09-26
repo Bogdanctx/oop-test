@@ -33,14 +33,14 @@ jobs:
       - name: Rebase branches onto ${{ env.BASE }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
-          while read -r branch; do
-            echo "Rebasing branch: $branch"
-            git checkout $branch
+          while read -r BRANCH; do
+            echo "Rebasing branch: $BRANCH"
+            git checkout $BRANCH
             if git rebase origin/${{ env.BASE }}; then
-              git push origin $branch --force-with-lease
-              echo "Rebased and pushed $branch"
+              git push origin $BRANCH --force-with-lease
+              echo "Rebased and pushed $BRANCH"
             else
-              echo "Conflict on $branch"
+              echo "Conflict on $BRANCH"
               git rebase --abort
             fi
           done <<< "$BRANCHES"
