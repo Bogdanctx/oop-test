@@ -30,8 +30,8 @@ jobs:
             echo " - $branch"
           done <<< "$BRANCHES"
 
-          echo "$BRANCHES" >> "$GITHUB_ENV"
-      
+          echo "BRANCHES=$BRANCHES" >> $GITHUB_ENV
+
       - name: Rebase branches onto ${{ env.BASE }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
@@ -45,4 +45,4 @@ jobs:
               echo "Conflict on $BRANCH"
               git rebase --abort
             fi
-          done <<< "${BRANCHES}"
+          done <<< "${{ env.BRANCHES }}"
