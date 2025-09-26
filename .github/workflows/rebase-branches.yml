@@ -2,6 +2,10 @@ name: Auto rebase branches
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to rebase onto"
+        required: false
 
 permissions:
   contents: write
@@ -23,16 +27,23 @@ jobs:
       - name: Fetch all branches
         run: |
           git fetch origin
-          git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##' > branches.txt
+
+          if [[ -n ${{ github.event.inputs.branch }} ]]; then
+            SPECIFIED_BRANCH="${{ github.event.inputs.branch }}"
+            echo "${SPECIFIED_BRANCH}" > branches.txt
+          else
+            git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##' > branches.txt
+          fi
+          
           echo "Branches used for rebase:"
           cat branches.txt
 
-      - name: Rebase branches onto ${{ env.BASE }}
+      - name: Rebase onto ${{ env.BASE }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
-            git checkout $BRANCH
+            git checkout -B $BRANCH origin/$BRANCH
             if git rebase origin/${{ env.BASE }}; then
               git push origin $BRANCH --force-with-lease
               echo "Rebased and pushed $BRANCH"
