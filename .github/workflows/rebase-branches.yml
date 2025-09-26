@@ -32,7 +32,7 @@ jobs:
         run: |
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
-            git checkout $BRANCH
+            git checkout -B $BRANCH origin/$BRANCH
             if git rebase origin/${{ env.BASE }}; then
               git push origin $BRANCH --force-with-lease
               echo "Rebased and pushed $BRANCH"
