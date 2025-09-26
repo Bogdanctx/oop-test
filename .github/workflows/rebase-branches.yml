@@ -37,10 +37,10 @@ jobs:
             echo "Rebasing branch: $branch"
             git checkout $branch
             if git rebase origin/${{ env.BASE }}; then
-                git push origin $branch --force-with-lease
-                echo "Rebased and pushed $branch"
+              git push origin $branch --force-with-lease
+              echo "Rebased and pushed $branch"
             else
-                echo "Conflict on $branch"
-                git rebase --abort
+              echo "Conflict on $branch"
+              git rebase --abort
             fi
           done <<< "$BRANCHES"
