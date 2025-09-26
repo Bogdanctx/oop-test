@@ -40,4 +40,5 @@ jobs:
               echo "Conflict on $BRANCH"
               git rebase --abort
             fi
+            echo "-----------------------------------"
           done <<< "$(cat branches.txt)"
