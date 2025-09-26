@@ -1,0 +1,43 @@
+name: Auto rebase branches
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      
+      - name: Read config file
+        id: config
+        run: |
+          BASE=$(jq -r '.base' .github/rebase-config.json)
+          echo "BASE=$BASE" >> $GITHUB_ENV
+          echo "Base branch: $BASE"
+        
+      - name: Fetch all branches
+        run: |
+          git fetch origin
+          git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##' > branches.txt
+          echo "Branches to rebase:"
+          cat branches.txt
+        
+      # - name: Rebase branches onto ${{ env.BASE }}
+      #   continue-on-error: true # in caz de conflict sa nu se opreasca
+      #   run: |
+      #     while read BRANCH; do
+      #       echo "Rebasing $BRANCH onto $BASE"
+      #       git checkout $BRANCH
+      #       if git rebase origin/$BASE; then
+      #         git push origin $BRANCH --force-with-lease
+      #         echo "Rebased and pushed $BRANCH"
+      #       else
+      #         echo "Conflict on $BRANCH"
+      #         git rebase --abort
+      #       fi
+      #     done < branches.txt
