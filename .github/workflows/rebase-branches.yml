@@ -23,8 +23,8 @@ jobs:
           BASE=$(jq -r '.base' .github/rebase-branches.json)
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "Base branch: $BASE"
-        
-      - name: Fetch all branches
+
+      - name: Fetch branches
         run: |
           git fetch origin
 
