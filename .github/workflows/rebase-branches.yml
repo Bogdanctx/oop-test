@@ -27,20 +27,20 @@ jobs:
           echo "Fetched branches:"
 
           while read -r branch; do
-              echo " - $branch"
+            echo " - $branch"
           done <<< "$BRANCHES"
       
       - name: Rebase branches onto ${{ env.BASE }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
           while read -r branch; do
-              echo "Rebasing branch: $branch"
-              git checkout $branch
-              if git rebase origin/${{ env.BASE }}; then
-                  git push origin $branch --force-with-lease
-                  echo "Rebased and pushed $branch"
-              else
-                  echo "Conflict on $branch"
-                  git rebase --abort
-              fi
+            echo "Rebasing branch: $branch"
+            git checkout $branch
+            if git rebase origin/${{ env.BASE }}; then
+                git push origin $branch --force-with-lease
+                echo "Rebased and pushed $branch"
+            else
+                echo "Conflict on $branch"
+                git rebase --abort
+            fi
           done <<< "$BRANCHES"
