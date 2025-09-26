@@ -23,14 +23,9 @@ jobs:
       - name: Fetch all branches
         run: |
           git fetch origin
-          BRANCHES=$(git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##')
+          git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##' > branches.txt
           echo "Branches used for rebase:"
-
-          while read -r branch; do
-            echo " - $branch"
-          done <<< "$BRANCHES"
-
-          echo "BRANCHES=$BRANCHES" >> $GITHUB_ENV
+          cat branches.txt
 
       - name: Rebase branches onto ${{ env.BASE }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
@@ -45,4 +40,4 @@ jobs:
               echo "Conflict on $BRANCH"
               git rebase --abort
             fi
-          done <<< "${{ env.BRANCHES }}"
+          done <<< "$(cat branches.txt)"
