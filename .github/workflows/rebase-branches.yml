@@ -28,6 +28,8 @@ jobs:
         run: |
           git fetch origin
 
+          # Daca a fost specificat un branch in input, atunci se face rebase doar pe acel branch
+          # Altfel, se face rebase pe toate branch-urile (mai putin base si HEAD)
           if [[ -n ${{ github.event.inputs.branch }} ]]; then
             SPECIFIED_BRANCH="${{ github.event.inputs.branch }}"
             echo "${SPECIFIED_BRANCH}" > branches.txt
