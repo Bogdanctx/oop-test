@@ -29,6 +29,8 @@ jobs:
           while read -r branch; do
             echo " - $branch"
           done <<< "$BRANCHES"
+
+          echo "$BRANCHES" >> "$GITHUB_ENV"
       
       - name: Rebase branches onto ${{ env.BASE }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
@@ -43,4 +45,4 @@ jobs:
               echo "Conflict on $BRANCH"
               git rebase --abort
             fi
-          done <<< "$BRANCHES"
+          done <<< "${BRANCHES}"
