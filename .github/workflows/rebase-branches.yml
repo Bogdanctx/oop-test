@@ -24,7 +24,7 @@ jobs:
         run: |
           git fetch origin
           BRANCHES=$(git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##')
-          echo "Fetched branches:"
+          echo "Branches used for rebase:"
 
           while read -r branch; do
             echo " - $branch"
