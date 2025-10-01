@@ -22,15 +22,15 @@ jobs:
           fetch-depth: 0
       
       - name: Read config file
-        id: config
         run: |
-          BRANCHES=$(jq -c .github/rebase-branches.json)
+          BRANCHES=$(jq -c '.' .github/rebase-branches.json)
           echo "BRANCHES=$BRANCHES" >> $GITHUB_ENV
           echo "Branches to rebase: $BRANCHES"
 
       - name: Test
         run: |
           echo "Branches from config: ${{ env.BRANCHES }}"
+
 
 
       # - name: Fetch branches
