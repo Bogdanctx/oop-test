@@ -26,7 +26,11 @@ jobs:
       - name: Fetch branches
         run: |
           git fetch origin
-          git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/${{ env.default_base }}" | sed 's#origin/##' > branches.txt
+          git branch -r | 
+            grep 'origin/' | 
+            grep -v "origin/HEAD" | 
+            grep -v "origin/${{ env.default_base }}" | 
+            sed 's#origin/##' > branches.txt
           
           echo "Branches to rebase:"
           cat branches.txt
@@ -39,12 +43,12 @@ jobs:
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
 
-            # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo
-            BASE=$(echo "$BRANCHES" | jq -r --arg branch "$BRANCH" --arg def "$default_base" '.[$branch] // $def')
+            # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo. Daca nu, foloseste default_base = 'main'
+            BASE=$(jq -r --arg branch "$BRANCH" --arg def "$default_base" '.[$branch] // $def' .github/rebase-branches.json)
             
             # Daca a fost scris un base in input, suprascriu BASE
-            if [[ -n "${{ github.event.inputs.base_branch }}" ]]; then
-              BASE="${{ github.event.inputs.base_branch }}"
+            if [[ -n "$INPUT_BASE_BRANCH" ]]; then
+              BASE="$INPUT_BASE_BRANCH"
             fi
             
             echo "Using base: $BASE"
