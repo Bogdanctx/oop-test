@@ -1,3 +1,17 @@
 {
-    "base": "main"
+    "baze-de-date/pqxx": "main",
+    "baze-de-date/sqlite": "main",
+    "common-libs": "main",
+    "descarcare-date-api": "main",
+    "ftxui": "main",
+    "http-server": "main",
+    "llms": "descarcare-date-api",
+    "sfml3": "main",
+    "sfml3-resurse-locale": "sfml3",
+    "sfml3-imagini-externe-api": "sfml3",
+    "sfml2": "main",
+    "sfml2-resurse-locale": "sfml2",
+    "sfml2-imagini-externe-api": "sfml2",
+    "tests/Boost-ext-ut": "main",
+    "tests/gtest": "main"
 }
