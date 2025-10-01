@@ -32,6 +32,11 @@ jobs:
         run: |
           echo '${{env.BRANCHES}}' | jq -r 'to_entries[] | "\(.key) \(.value)"' |
           while read -r BRANCH BASE; do
+            
+            if [[ -n "${{ github.event.inputs.base_branch }}" ]]; then
+              BASE="${{ github.event.inputs.base_branch }}"
+            fi
+          
             echo "Rebasing branch: $BRANCH onto base: $BASE"
             # git checkout -B "$BRANCH" "origin/$BRANCH"
 
