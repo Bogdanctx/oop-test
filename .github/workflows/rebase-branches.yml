@@ -6,7 +6,6 @@ on:
       base_branch:
         description: 'Branch to rebase onto'
         required: false # daca nu e specificat, se face rebase pe toate branch-urile
-        default: ''
 permissions:
   contents: write
 
