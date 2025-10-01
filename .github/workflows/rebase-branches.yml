@@ -33,15 +33,15 @@ jobs:
           git fetch origin
 
           if [[ -z "${{ env.INPUT_BASE }}" ]]; then
-            echo "DEFAULT_BASE=main" >> $GITHUB_ENV
+            echo "REBASE_BRANCH=main"
           else
-            echo "DEFAULT_BASE=${{ env.INPUT_BASE }}" >> $GITHUB_ENV
+            echo "REBASE_BRANCH=${{ env.INPUT_BASE }}"
           fi
 
           git branch -r | 
             grep 'origin/' | 
             grep -v "origin/HEAD" | 
-            grep -v "origin/$DEFAULT_BASE" | 
+            grep -v "origin/$REBASE_BRANCH" | 
             sed 's#origin/##' > branches.txt
           
           echo "Branches to rebase:"
