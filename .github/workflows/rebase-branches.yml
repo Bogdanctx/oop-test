@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       base_branch:
-        description: "Branch to rebase onto"
+        description: 'Branch to rebase onto'
         required: false # daca nu e specificat, se face rebase pe toate branch-urile
+        default: ''
 
 permissions:
   contents: write
@@ -30,7 +31,7 @@ jobs:
       - name: Run automatic rebase
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
-          echo '${{env.BRANCHES}}' | jq -r 'to_entries[] | "\(.key) \(.value)"' |
+          echo '${{ env.BRANCHES }}' | jq -r 'to_entries[] | "\(.key) \(.value)"' |
           while read -r BRANCH BASE; do
             
             if [[ -n "${{ github.event.inputs.base_branch }}" ]]; then
