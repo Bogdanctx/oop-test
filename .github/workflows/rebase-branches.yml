@@ -27,38 +27,21 @@ jobs:
           echo "BRANCHES=$BRANCHES" >> $GITHUB_ENV
           echo "Branches to rebase: $BRANCHES"
 
-      - name: Test
+      - name: Run automatic rebase
+        continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
-          echo "Branches from config: ${{ env.BRANCHES }}"
+          echo '${{env.BRANCHES}}' | jq -r 'to_entries[] | "\(.key) \(.value)"' |
+          while read -r BRANCH BASE; do
+            echo "Rebasing branch: $BRANCH onto base: $BASE"
+            # git checkout -B "$BRANCH" "origin/$BRANCH"
 
+            # if git rebase "origin/$BASE"; then
+            #   git push origin "$BRANCH" --force-with-lease
+            #   echo "Rebased $BRANCH onto $BASE"
+            # else
+            #   echo "Rebased aborted: branch = $BRANCH, base = $BASE"
+            #   git rebase --abort
+            # fi
 
-
-      # - name: Fetch branches
-      #   run: |
-      #     git fetch origin
-
-      #     if [[ -n ${{ github.event.inputs.base_branch }} ]]; then
-      #       SPECIFIED_BRANCH="${{ github.event.inputs.base_branch }}"
-      #       echo "${SPECIFIED_BRANCH}" > branches.txt
-      #     else
-      #       git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##' > branches.txt
-      #     fi
-          
-      #     echo "Branches used for rebase:"
-      #     cat branches.txt
-
-      # - name: Rebase onto ${{ env.BASE }}
-      #   continue-on-error: true # in caz de conflict sa nu se opreasca
-      #   run: |
-      #     while read -r BRANCH; do
-      #       echo "Rebasing branch: $BRANCH"
-      #       git checkout -B "$BRANCH" "origin/$BRANCH"
-      #       if git rebase "origin/${{ env.BASE }}"; then
-      #         git push origin "$BRANCH" --force-with-lease
-      #         echo "Rebased and pushed $BRANCH"
-      #       else
-      #         echo "Conflict on $BRANCH"
-      #         git rebase --abort
-      #       fi
-      #       echo "-----------------------------------"
-      #     done <<< "$(cat branches.txt)"
+            echo "-----------------------------------"
+          done
