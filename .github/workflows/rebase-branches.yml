@@ -32,24 +32,26 @@ jobs:
         run: |
           git fetch origin
 
+          # Daca nu am nimic in input, atunci se face rebase din main
           if [[ -z "${{ env.INPUT_BASE }}" ]]; then
             REBASE_BRANCH="main"
           else
             REBASE_BRANCH="${{ env.INPUT_BASE }}"
           fi
 
-          git branch -r | 
-            grep 'origin/' | 
-            grep -v "origin/HEAD" | 
-            grep -v "origin/$REBASE_BRANCH" | 
-            sed 's#origin/##' > branches.txt
+          git branch -r |                      # lista toate branch-urile remote
+            grep 'origin/' |                   # pastrez doar branch-urile care incep cu origin/
+            grep -v "origin/HEAD" |            # exclud HEAD
+            grep -v "origin/$REBASE_BRANCH" |  # exclud branch-ul de rebase
+            sed 's#origin/##' > branches.txt   # sterg origin/ si salveaza in fisier
           
           echo "Branches to rebase:"
           cat branches.txt
 
       - name: Read custom base branches
         run: |
-          echo "BASE_BRANCHES=$(jq -c . .github/rebase-branches.json)" >> $GITHUB_ENV
+          # citesc config-ul cu base-uri custom din JSON
+          echo "BASE_BRANCHES=$(jq -c . .github/rebase-branches.json)" >> $GITHUB_ENV 
 
       - name: Rebase branches
         continue-on-error: true # in caz de conflict sa nu se opreasca
@@ -57,10 +59,10 @@ jobs:
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
 
-            # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo. Daca nu, foloseste default_base = 'main'
+            # Daca BRANCH e in rebase-branches.json, folosesc base-ul de acolo. Daca nu, folosesc default_base = 'main'
             BASE=$(echo "$BASE_BRANCHES" | jq -r --arg BRANCH "$BRANCH" '.[$BRANCH] // "main"')
             
-            # Daca a fost scris un base in input, suprascriu BASE
+            # Daca a fost scris un base in input, suprascriu BASE cu ce a fost in input
             if [[ -n "${{ env.INPUT_BASE }}" ]]; then
               BASE="${{ env.INPUT_BASE }}"
             fi
