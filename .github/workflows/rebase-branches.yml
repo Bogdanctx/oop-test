@@ -29,7 +29,7 @@ jobs:
           git branch -r | 
             grep 'origin/' | 
             grep -v "origin/HEAD" | 
-            grep -v "origin/${{ env.default_base }}" | 
+            grep -v "origin/${{ env.DEFAULT_BASE }}" | 
             sed 's#origin/##' > branches.txt
           
           echo "Branches to rebase:"
@@ -44,7 +44,7 @@ jobs:
             echo "Rebasing branch: $BRANCH"
 
             # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo. Daca nu, foloseste default_base = 'main'
-            BASE=$(jq -r --arg branch "$BRANCH" --arg def "$DEFAULT_BASE" '.[$branch] // $def' .github/rebase-branches.json)
+            BASE=$(jq -r --arg branch "$BRANCH" --arg default_base "$DEFAULT_BASE" '.[$branch] // $default_base' .github/rebase-branches.json)
             
             # Daca a fost scris un base in input, suprascriu BASE
             if [[ -n "$INPUT_BASE_BRANCH" ]]; then
