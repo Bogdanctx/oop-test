@@ -46,9 +46,7 @@ jobs:
         run: |
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
-
-            git show origin/$DEFAULT_BASE:.github/rebase-branches.json > .github/rebase-branches.json
-
+            
             # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo. Daca nu, foloseste default_base = 'main'
             BASE=$(echo "$BASE_BRANCHES" | jq -r --arg BRANCH "$BRANCH" '.[$BRANCH] // env.DEFAULT_BASE')
             
