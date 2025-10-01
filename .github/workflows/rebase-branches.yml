@@ -42,6 +42,7 @@ jobs:
       - name: Rebase branches
         env:
           INPUT_BASE_BRANCH: ${{ github.event.inputs.base_branch }}
+          DEFAULT_BASE: ${{ env.DEFAULT_BASE }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
           while read -r BRANCH; do
