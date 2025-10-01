@@ -46,9 +46,9 @@ jobs:
         run: |
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
-            
+
             # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo. Daca nu, foloseste default_base = 'main'
-            BASE=$(echo "$BASE_BRANCHES" | jq -r --arg BRANCH "$BRANCH" '.[$BRANCH] // env.DEFAULT_BASE')
+            BASE=$(echo "$BASE_BRANCHES" | jq -r --arg BRANCH "$BRANCH" '.[$BRANCH] // $DEFAULT_BASE')
             
             # Daca a fost scris un base in input, suprascriu BASE
             if [[ -n "$INPUT_BASE_BRANCH" ]]; then
