@@ -49,8 +49,7 @@ jobs:
 
       - name: Read custom base branches
         run: |
-          BASE_BRANCHES=$(jq -c '.' .github/rebase-branches.json)
-          echo "BASE_BRANCHES=$BASE_BRANCHES" >> $GITHUB_ENV
+          echo "BASE_BRANCHES=$(jq -c . .github/rebase-branches.json)" >> $GITHUB_ENV
 
       - name: Rebase branches
         continue-on-error: true # in caz de conflict sa nu se opreasca
