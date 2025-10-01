@@ -7,7 +7,6 @@ on:
         description: 'Branch to rebase onto'
         required: false # daca nu e specificat, se face rebase pe toate branch-urile
         default: ''
-
 permissions:
   contents: write
 
@@ -15,6 +14,8 @@ jobs:
   rebase:
     # renovate: depName=ubuntu
     runs-on: ubuntu-22.04
+    env:
+      default_base: 'main'
     steps:
       - name: Checkout repository
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
@@ -22,32 +23,39 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Read config file
+      - name: Fetch branches
         run: |
-          BRANCHES=$(jq -c '.' .github/rebase-branches.json)
-          echo "BRANCHES=$BRANCHES" >> $GITHUB_ENV
-          echo "Branches to rebase: $BRANCHES"
+          git fetch origin
+          git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/${{ env.default_base }}" | sed 's#origin/##' > branches.txt
+          
+          echo "Branches to rebase:"
+          cat branches.txt
 
-      - name: Run automatic rebase
+      - name: Rebase branches
+        env:
+          INPUT_BASE_BRANCH: ${{ github.event.inputs.base_branch }}
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
-          echo '${{ env.BRANCHES }}' | jq -r 'to_entries[] | "\(.key) \(.value)"' |
-          while read -r BRANCH BASE; do
+          while read -r BRANCH; do
+            echo "Rebasing branch: $BRANCH"
+
+            # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo
+            BASE=$(echo "$BRANCHES" | jq -r --arg branch "$BRANCH" --arg def "$default_base" '.[$branch] // $def')
             
+            # Daca a fost scris un base in input, suprascriu BASE
             if [[ -n "${{ github.event.inputs.base_branch }}" ]]; then
               BASE="${{ github.event.inputs.base_branch }}"
             fi
-          
-            echo "Rebasing branch: $BRANCH onto base: $BASE"
+            
+            echo "Using base: $BASE"
             # git checkout -B "$BRANCH" "origin/$BRANCH"
 
             # if git rebase "origin/$BASE"; then
             #   git push origin "$BRANCH" --force-with-lease
-            #   echo "Rebased $BRANCH onto $BASE"
+            #   echo "Rebased $BRANCH"
             # else
-            #   echo "Rebased aborted: branch = $BRANCH, base = $BASE"
+            #   echo "Conflict on $BRANCH"
             #   git rebase --abort
             # fi
-
             echo "-----------------------------------"
-          done
+          done <<< "$(cat branches.txt)"
