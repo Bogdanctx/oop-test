@@ -33,9 +33,10 @@ jobs:
           git fetch origin
 
           if [[ -z "${{ env.INPUT_BASE }}" ]]; then
-            echo "REBASE_BRANCH=main"
+          REBASE_BRANCH="main"
+
           else
-            echo "REBASE_BRANCH=${{ env.INPUT_BASE }}"
+            REBASE_BRANCH="${{ env.INPUT_BASE }}"
           fi
 
           git branch -r | 
