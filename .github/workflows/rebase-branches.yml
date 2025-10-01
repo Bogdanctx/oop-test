@@ -15,7 +15,7 @@ jobs:
     # renovate: depName=ubuntu
     runs-on: ubuntu-22.04
     env:
-      default_base: 'main'
+      DEFAULT_BASE: 'main'
     steps:
       - name: Checkout repository
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
@@ -38,13 +38,14 @@ jobs:
       - name: Rebase branches
         env:
           INPUT_BASE_BRANCH: ${{ github.event.inputs.base_branch }}
+
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
 
             # Daca BRANCH e in rebase-branches.json, foloseste base-ul de acolo. Daca nu, foloseste default_base = 'main'
-            BASE=$(jq -r --arg branch "$BRANCH" --arg def "$default_base" '.[$branch] // $def' .github/rebase-branches.json)
+            BASE=$(jq -r --arg branch "$BRANCH" --arg def "$default_base" '.[$branch] // $DEFAULT_BASE' .github/rebase-branches.json)
             
             # Daca a fost scris un base in input, suprascriu BASE
             if [[ -n "$INPUT_BASE_BRANCH" ]]; then
