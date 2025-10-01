@@ -30,9 +30,7 @@ jobs:
 
       - name: Test
         run: |
-          echo "Branches from config: $BRANCHES"
-
-          echo "ENV: $GITHUB_ENV"
+          echo "Branches from config: ${{ env.BRANCHES }}"
           exit 0
 
       # - name: Fetch branches
