@@ -24,7 +24,7 @@ jobs:
       - name: Read config file
         id: config
         run: |
-          BRANCHES=$(jq -c '.branches' .github/rebase-branches.json)
+          BRANCHES=$(jq -c .github/rebase-branches.json)
           echo "BRANCHES=$BRANCHES" >> $GITHUB_ENV
           echo "Branches to rebase: $BRANCHES"
 
