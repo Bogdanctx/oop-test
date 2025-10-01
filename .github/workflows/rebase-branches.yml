@@ -33,8 +33,7 @@ jobs:
           git fetch origin
 
           if [[ -z "${{ env.INPUT_BASE }}" ]]; then
-          REBASE_BRANCH="main"
-
+            REBASE_BRANCH="main"
           else
             REBASE_BRANCH="${{ env.INPUT_BASE }}"
           fi
